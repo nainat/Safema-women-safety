@@ -4,14 +4,14 @@ const User = require("../models/User");
 
 const router = express.Router();
 
-// Register User
+// ✅ REGISTER USER
 router.post("/register", async (req, res) => {
-    console.log("📩 Incoming Register Request:", req.body);
+    console.log("📩 Register Request Received:", req.body);
 
-    const { name, email, username, password } = req.body;  // ✅ Ensure username is included
+    const { name, email, username, password } = req.body;
 
     try {
-        if (!name || !email || !password) {
+        if (!name || !email || !username || !password) {
             return res.status(400).json({ error: "All fields are required" });
         }
 
@@ -27,16 +27,14 @@ router.post("/register", async (req, res) => {
         res.status(201).json({ message: "User registered successfully" });
 
     } catch (error) {
-        console.error("❌ Server Error:", error.message);
-        res.status(500).json({ error: error.message });
+        console.error("❌ Error in Register Route:", error.message);
+        res.status(500).json({ error: "Server error" });
     }
 });
 
-
-
-
-// Login User
+// ✅ LOGIN USER
 router.post("/login", async (req, res) => {
+    console.log("📩 Incoming Login Request:", req.body);
     const { email, password } = req.body;
 
     try {
@@ -48,26 +46,9 @@ router.post("/login", async (req, res) => {
 
         res.json({ message: "Login successful", user: { id: user._id, name: user.name, email: user.email } });
     } catch (error) {
+        console.error("❌ Server Error:", error.message);
         res.status(500).json({ error: "Server error" });
     }
 });
-
-// Get user profile by ID (No Middleware)
-router.get("/profile/:id", async (req, res) => {
-  try {
-    console.log("Received User ID:", req.params.id); // Debugging log
-    const user = await User.findById(req.params.id).select("-password");
-    
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    res.json(user);
-  } catch (error) {
-    console.error("Server error:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-
-
 
 module.exports = router;

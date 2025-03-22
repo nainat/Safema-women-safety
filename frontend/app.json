@@ -37,17 +37,6 @@
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "expo": {
-    "plugins": ["expo-maps"]
-  },
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "38e8966d-7dc3-497d-9a44-c79020ff0a12"
-      }
     }
   }
 }
