@@ -1,8 +1,26 @@
-import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, Image, TouchableOpacity, Linking } from "react-native";
 import { useRouter } from "expo-router";
+import * as IntentLauncher from "expo-intent-launcher";
 
 export default function SetupScreen() {
   const router = useRouter();
+
+  const openMacroDroid = async () => {
+      const packageName = "com.arlosoft.macrodroid";
+      const className = "com.arlosoft.macrodroid.LaunchActivity"; // Main launcher activity of MacroDroid
+  
+      try {
+        await IntentLauncher.startActivityAsync("android.intent.action.MAIN", {
+          packageName,
+          className,
+        });
+      } catch (error) {
+        console.log("MacroDroid not found, opening Play Store...");
+        Linking.openURL(
+          "https://play.google.com/store/apps/details?id=com.arlosoft.macrodroid"
+        );
+      }
+    };
 
   return (
     <ScrollView style={{ flex: 1, padding: 20, backgroundColor: "#fff" }}>
@@ -13,21 +31,31 @@ export default function SetupScreen() {
         <Text style={{ fontSize: 18, fontWeight: "bold" }}>Step 1: Enable Location</Text>
         <Text>Go to your phone settings and allow location access for SAFEMA.</Text>
       </View>
-
+      
+      <View style={{ marginBottom: 20 }}>
+        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Step 2: Install & Open Macroid App</Text>
+        <Text>Install the MacroDroid app from the Play Store to configure your Bluetooth SOS button.</Text>
+        <TouchableOpacity
+          onPress={openMacroDroid}
+          style={{ marginTop: 10, backgroundColor: "#007bff", padding: 10, borderRadius: 8, alignSelf: "flex-start" }}
+        >
+          <Text style={{ color: "#fff" }}>Open MacroDroid</Text>
+        </TouchableOpacity>
+      </View>
       {/* Step 2: Connect Bluetooth Button */}
       <View style={{ marginBottom: 20 }}>
-        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Step 2: Connect Bluetooth Button</Text>
+        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Step 3: Connect Bluetooth Button</Text>
         <Text>Ensure Bluetooth is on and pair your SOS button from Bluetooth settings.</Text>
       </View>
       {/* Step 3: Test the Button */}
       <View style={{ marginBottom: 20 }}>
-        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Step 3: Allow app permissions</Text>
+        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Step 4: Allow app permissions</Text>
         <Text>Give access to safema app to access  to contacts, phone, SMS, Bluetooth Button.</Text>
       </View>
 
       {/* Step 4: Test the Button */}
       <View style={{ marginBottom: 20 }}>
-        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Step 4: Test the Button</Text>
+        <Text style={{ fontSize: 18, fontWeight: "bold" }}>Step 5: Test the Button</Text>
         <Text>Press once to send location, twice to call emergency contacts,three times for emergency calls to Police and She-Teams, and long press for siren.</Text>
       </View>
 
@@ -45,7 +73,7 @@ export default function SetupScreen() {
         onPress={() => router.back()}
         style={{ backgroundColor: "#ff0090", padding: 15, borderRadius: 10, alignItems: "center" }}
       >
-        <Text style={{ color: "white", fontSize: 16 }}>Back to Home</Text>
+        <Text style={{ color: "white", fontSize: 16,paddingBottom: 20 }}>Back to Home</Text>
       </TouchableOpacity>
     </ScrollView>
   );

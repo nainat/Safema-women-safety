@@ -35,6 +35,10 @@ export default function ProtectedLayout() {
         name="community" 
         options={{ tabBarIcon: ({ color }) => <Ionicons name="people" size={24} color={color} /> }} 
       />
+      {/* <Tabs.Screen 
+        name="setups" 
+        options={{ tabBarIcon: ({ color }) => <Ionicons name="git-network-outline" size={24} color={color} /> }} 
+      /> */}
       <Tabs.Screen 
         name="settings" 
         options={{ tabBarIcon: ({ color }) => <Ionicons name="settings" size={24} color={color} /> }} 

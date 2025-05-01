@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { View, StyleSheet, TouchableOpacity, Text, Alert } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Text, Alert, Linking } from "react-native";
 import * as Location from "expo-location";
 import { WebView } from "react-native-webview";
 import { Audio } from "expo-av";
@@ -7,6 +7,7 @@ import { Audio } from "expo-av";
 const EmergencyScreen = () => {
   const [location, setLocation] = useState(null);
   const [safePlaces, setSafePlaces] = useState([]);
+  const [isAlarmPlayed, setIsAlarmPlayed] = useState(false); // Track if alarm has been played
   const webViewRef = useRef(null);
   const alarmSound = useRef(new Audio.Sound());
 
@@ -54,6 +55,23 @@ const EmergencyScreen = () => {
 
   const playAlarm = async () => {
     await alarmSound.current.replayAsync();
+    setIsAlarmPlayed(true); // Change button to Navigate after alarm is played
+  };
+
+  const navigateToNearestSafePlace = () => {
+    if (safePlaces.length === 0) {
+      Alert.alert("No Safe Places", "Couldn't find any nearby safe places.");
+      return;
+    }
+
+    // Find nearest safe place
+    const nearest = safePlaces.reduce((closest, place) => {
+      const dist = Math.hypot(place.latitude - location.latitude, place.longitude - location.longitude);
+      return dist < Math.hypot(closest.latitude - location.latitude, closest.longitude - location.longitude) ? place : closest;
+    });
+
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${nearest.latitude},${nearest.longitude}&travelmode=walking`;
+    Linking.openURL(url);
   };
 
   const getMapHtml = () => {
@@ -105,9 +123,16 @@ const EmergencyScreen = () => {
         <Text style={styles.buttonText}>🚨 Alert</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.alarmButton} onPress={playAlarm}>
-        <Text style={styles.buttonText}>🔊 Alarm</Text>
-      </TouchableOpacity>
+      {/* Conditional rendering for the Alarm or Navigate button */}
+      {isAlarmPlayed ? (
+        <TouchableOpacity style={styles.alarmButton} onPress={navigateToNearestSafePlace}>
+          <Text style={styles.buttonText}>📍 Navigate</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity style={styles.alarmButton} onPress={playAlarm}>
+          <Text style={styles.buttonText}>🔊 Alarm</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
